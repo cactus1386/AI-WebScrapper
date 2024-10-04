@@ -1,26 +1,37 @@
 import streamlit as st
-from scrape import scrape, split_content, clean_body_content, body_content
+from scrape import (
+    scrape_website,
+    extract_body_content,
+    clean_body_content,
+    split_dom_content,
+)
+from parse import parse_ollama
+
 
 st.title("AI Web Scraper")
-url = st.text_input("Enter a Website URL: ")
+url = st.text_input("Enter Website URL")
+
+if st.button("Scrape Website"):
+    if url:
+        st.write("Scraping the website...")
+
+        dom_content = scrape_website(url)
+        body_content = extract_body_content(dom_content)
+        cleaned_content = clean_body_content(body_content)
+
+        st.session_state.dom_content = cleaned_content
+
+        with st.expander("View DOM Content"):
+            st.text_area("DOM Content", cleaned_content, height=300)
 
 
-if st.button("Scrap Data"):
-    st.write("Scrap Website ...")
-    result = scrape(url)
-    body_content = body_content(result)
-    clean_content = clean_body_content(body_content)
+if "dom_content" in st.session_state:
+    parse_description = st.text_area("Describe what you want to parse")
 
-    st.session_state.dom_content = clean_content
+    if st.button("Parse Content"):
+        if parse_description:
+            st.write("Parsing the content...")
 
-    with st.expander("View Dom Content"):
-        st.text_area("Dom Content", clean_content, height=300)
-
-    if "dom_content" in st.session_state:
-        parse_description = st.text_area("Describe what you want to parse: ")
-
-        if st.button('Parse Content'):
-            if parse_description:
-                st.write('Parsing the content')
-
-                dom_chunks = split_content(st.session_state.dom_content)
+            dom_chunks = split_dom_content(st.session_state.dom_content)
+            parsed_result = parse_ollama(dom_chunks, parse_description)
+            st.write(parsed_result)
