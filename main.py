@@ -5,8 +5,8 @@ from scrape import (
     clean_body_content,
     split_dom_content,
 )
-from parse import parse_ollama
-
+# from llama2.parse import parse_ollama
+from gpt.parse import parse_gpt
 
 st.title("AI Web Scraper")
 url = st.text_input("Enter Website URL")
@@ -33,5 +33,5 @@ if "dom_content" in st.session_state:
             st.write("Parsing the content...")
 
             dom_chunks = split_dom_content(st.session_state.dom_content)
-            parsed_result = parse_ollama(dom_chunks, parse_description)
+            parsed_result = parse_gpt(dom_chunks, parse_description)
             st.write(parsed_result)
