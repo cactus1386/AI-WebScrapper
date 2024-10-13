@@ -11,7 +11,7 @@ template = (
     "4. **Direct Data Only:** Your output should contain only the data that is explicitly requested, with no other text."
 )
 
-model = OllamaLLM(model='llama2')
+model = OllamaLLM(model='llama3.2')
 
 
 def parse_ollama(dom_chunks, parse_description):
@@ -22,7 +22,7 @@ def parse_ollama(dom_chunks, parse_description):
 
     for i, chunk in enumerate(dom_chunks, start=1):
         response = chain.invoke(
-            {"dom_content": chunk, "parse_description": parse_description})  # Update here
+            {"dom_content": chunk, "parse_description": parse_description})
 
         print(f"parsed batch {i} of {len(dom_chunks)}")
         parsed_result.append(response)
